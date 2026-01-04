@@ -5,28 +5,20 @@ public class Timer : MonoBehaviour
 {
     public event Action Paused;
     public event Action Resumed;
-    public event Action SecondPassed;
 
-    private bool  _isPaused       = true;
-    private int   _nextFullSecond = 1;
-    private  float CurrentTime {get; set;}
+    private bool _isPaused = true;
+    public ReactiveVariable<float> CurrentTime {get; private set;} = new ReactiveVariable<float>(0);
 
     private void Update ()
     {
         if (_isPaused == false)
         {
-            if (CurrentTime >= 10)
+            if (CurrentTime.Value >= 10)
             {
                 Pause();
             }
 
             Tick(Time.deltaTime);
-
-            if (GetExactTime() >= _nextFullSecond)
-            {
-                _nextFullSecond++;
-                SecondPassed?.Invoke();
-            }
         }
     }
 
@@ -42,15 +34,13 @@ public class Timer : MonoBehaviour
         Resumed?.Invoke();
     }
 
-    public float GetExactTime () => CurrentTime;
-
     private void Tick (float deltaTime)
     {
-        CurrentTime += deltaTime;
+        CurrentTime.Value += deltaTime;
     }
 
     public void LogExactTime ()
     {
-        Debug.Log(GetExactTime());
+        Debug.Log(CurrentTime.Value);
     }
 }

@@ -10,8 +10,18 @@ public class TimerView : MonoBehaviour
 	[SerializeField] private Timer _timer;
 	[SerializeField] private Slider _slider;
 
-	private void Update ()
+	private void Start ()
 	{
-		_slider.value = _timer.GetExactTime();
+		_timer.CurrentTime.Changed += HandleTimeChanged;
+	}
+
+	private void HandleTimeChanged (float previousTime, float newTime)
+	{
+		_slider.value = newTime;
+	}
+
+	private void OnDestroy ()
+	{
+		_timer.CurrentTime.Changed += HandleTimeChanged;
 	}
 }
